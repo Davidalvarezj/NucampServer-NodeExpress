@@ -1,5 +1,6 @@
 const express = require("express");
 const partnerRouter = express.Router();
+const authenticate = require("../authenticate");
 
 const Partner = require("../models/partner");
 
@@ -13,7 +14,7 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .post((req, res, next) => {
+  .post(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/partner, POST a new campsites collections inside body msg
     Partner.create(req.body)
       .then((partner) => {
@@ -21,11 +22,11 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .put((req, res) => {
+  .put(authenticate.verifyUser, (req, res) => {
     res.status = 403;
     res.end("PUT operation not supported on /partners");
   })
-  .delete((req, res, next) => {
+  .delete(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/partner, DELETE all campsites collections
     Partner.deleteMany()
       .then((partners) => {
@@ -45,13 +46,13 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .post((req, res, next) => {
+  .post(authenticate.verifyUser, (req, res, next) => {
     res.status = 403;
     res.end(
       `POST operation not supported on /partners/${req.params.partnerId}`
     );
   })
-  .put((req, res, next) => {
+  .put(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/partners/:partnersd, PUT new field data to the specific :campsiteId using body msg
     Partner.findByIdAndUpdate(
       req.params.partnerId,
@@ -65,7 +66,7 @@ partnerRouter
       })
       .catch((err) => next(err));
   })
-  .delete((req, res, next) => {
+  .delete(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/parner/:campsiteId, DELETE the specific document :campsiteId
     Partner.findByIdAndDelete(req.params.partnerId)
       .then((partner) => {

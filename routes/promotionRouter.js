@@ -1,5 +1,6 @@
 const express = require("express");
 const promotionRouter = express.Router();
+const authenticate = require("../authenticate");
 
 const Promotion = require("../models/promotion");
 
@@ -14,7 +15,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .post((req, res, next) => {
+  .post(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/promotion, POST a new campsites collections inside body msg
     Promotion.create(req.body)
       .then((promotion) => {
@@ -22,11 +23,11 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .put((req, res) => {
+  .put(authenticate.verifyUser, (req, res) => {
     res.status = 403;
     res.end("PUT operation not supported on /promotions");
   })
-  .delete((req, res, next) => {
+  .delete(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/promotion, DELETE all campsites collections
     Promotion.deleteMany()
       .then((promotions) => {
@@ -46,13 +47,13 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .post((req, res, next) => {
+  .post(authenticate.verifyUser, (req, res, next) => {
     res.status = 403;
     res.end(
       `POST operation not supported on /promotions/${req.params.promotionId}`
     );
   })
-  .put((req, res, next) => {
+  .put(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/promotions/:promotionsd, PUT new field data to the specific :campsiteId using body msg
     Promotion.findByIdAndUpdate(
       req.params.promotionId,
@@ -66,7 +67,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .delete((req, res, next) => {
+  .delete(authenticate.verifyUser, (req, res, next) => {
     // localhost:3000/parner/:campsiteId, DELETE the specific document :campsiteId
     Promotion.findByIdAndDelete(req.params.promotionId)
       .then((promotion) => {
