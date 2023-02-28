@@ -9,6 +9,7 @@ campsiteRouter
   .get((req, res, next) => {
     // localhost:3000/campsites, GET all campsites collections
     Campsite.find()
+      .populate("comments.author")
       .then((campsites) => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -48,6 +49,7 @@ campsiteRouter
   .get((req, res, next) => {
     // localhost:3000/campsites/:campsiteId, GET specific campsite collection "campsiteId"
     Campsite.findById(req.params.campsiteId)
+      .populate("comments.author")
       .then((campsite) => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -95,6 +97,7 @@ campsiteRouter
   .get((req, res, next) => {
     // localhost:3000/campsites/:campsiteId/comments, GET the specific Array of comments on the document = campsiteId, collection = campsites
     Campsite.findById(req.params.campsiteId)
+      .populate("comments.author")
       .then((campsite) => {
         if (campsite) {
           res.statusCode = 200;
@@ -113,6 +116,7 @@ campsiteRouter
     Campsite.findById(req.params.campsiteId)
       .then((campsite) => {
         if (campsite) {
+          req.body.author = req.user._id;
           campsite.comments.push(req.body);
           campsite
             .save()
@@ -167,6 +171,7 @@ campsiteRouter
   .get((req, res, next) => {
     // localhost:3000/campsites/:campsiteId/comments/:commentId, GET specific coment ID  on the document: commentId, document: campsiteId, collection: campsites
     Campsite.findById(req.params.campsiteId)
+      .populate("comments.author")
       .then((campsite) => {
         if (campsite && campsite.comments.id(req.params.commentId)) {
           // Search if exist document campsiteID, and document commentID
