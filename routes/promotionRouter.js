@@ -15,7 +15,7 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .post(authenticate.verifyUser, (req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     // localhost:3000/promotion, POST a new campsites collections inside body msg
     Promotion.create(req.body)
       .then((promotion) => {
@@ -27,14 +27,18 @@ promotionRouter
     res.status = 403;
     res.end("PUT operation not supported on /promotions");
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    // localhost:3000/promotion, DELETE all campsites collections
-    Promotion.deleteMany()
-      .then((promotions) => {
-        res.status(200).json(promotions);
-      })
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      // localhost:3000/promotion, DELETE all campsites collections
+      Promotion.deleteMany()
+        .then((promotions) => {
+          res.status(200).json(promotions);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 promotionRouter
   .route("/:promotionId")
@@ -53,7 +57,7 @@ promotionRouter
       `POST operation not supported on /promotions/${req.params.promotionId}`
     );
   })
-  .put(authenticate.verifyUser, (req, res, next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     // localhost:3000/promotions/:promotionsd, PUT new field data to the specific :campsiteId using body msg
     Promotion.findByIdAndUpdate(
       req.params.promotionId,
@@ -67,13 +71,17 @@ promotionRouter
       })
       .catch((err) => next(err));
   })
-  .delete(authenticate.verifyUser, (req, res, next) => {
-    // localhost:3000/parner/:campsiteId, DELETE the specific document :campsiteId
-    Promotion.findByIdAndDelete(req.params.promotionId)
-      .then((promotion) => {
-        res.status(200).json(promotion);
-      })
-      .catch((err) => next(err));
-  });
+  .delete(
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res, next) => {
+      // localhost:3000/parner/:campsiteId, DELETE the specific document :campsiteId
+      Promotion.findByIdAndDelete(req.params.promotionId)
+        .then((promotion) => {
+          res.status(200).json(promotion);
+        })
+        .catch((err) => next(err));
+    }
+  );
 
 module.exports = promotionRouter;
